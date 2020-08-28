@@ -24,6 +24,9 @@ class Actuator:
     def __del__(self):
         self.send_current(0)
 
+    def act_time(self):
+        return time.time() - self.state.time - self.start_time
+
     def recv_can_answ(self):
         res = self.bus.recv()
         res_ar = [x for x in res.data]
