@@ -1,13 +1,5 @@
-import threading
-import time
+import numpy as np 
 
-def f():
-    print("hello world")  # your code here
-    #myThread.run()
+data_des = np.genfromtxt('opt_traj/swing_up.csv',delimiter=',').transpose()
 
-if __name__ == '__main__':
-    myThread = threading.Timer(0.004, f)  # timer is set to 3 seconds
-    myThread.start()
-    time.sleep(5)  # it can be loop or other time consuming code here
-    if myThread.is_alive():
-        myThread.cancel()
+print(np.size(data_des))

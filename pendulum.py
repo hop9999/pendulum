@@ -6,7 +6,7 @@ class Pendulum:
         self.m = m
         self.l = l
         self.g = 9.8
-        self.mgl = 0.9*0.183#self.m*self.g*self.l
+        self.mgl = 1*0.183#self.m*self.g*self.l
 
         self.w = 0.41
         self.h = 0.02
@@ -18,10 +18,16 @@ class Pendulum:
         self.Kp = 1
         self.Kd = 0.11
 
-        self.u_max = 10
+        self.u_max = 6
     def ff_control(self, X_des):
         u = (self.mgl*np.sin(X_des[0]) + self.I*X_des[2] + self.k_x*X_des[1])/self.k_m
         return u
+
+    def cont_pd(self,X_des,X):
+        K = np.array([[self.Kp, self.Kd]])
+        u = np.dot(K,X_des[0:2]-X)/self.k_m
+        u = np.clip(u,-self.u_max,self.u_max)
+        return u[0][0]
 
     def control_pd(self,X_des,X):
         K = np.array([[self.Kp, self.Kd]])

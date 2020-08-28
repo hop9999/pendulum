@@ -3,13 +3,12 @@ import matplotlib.pyplot as plt
 import os
 import time
 
-#param = os.sched_param(os.sched_get_priority_max(os.SCHED_FIFO))
-#os.sched_setscheduler(0, os.SCHED_FIFO, param)
 bus = can.interface.Bus(bustype='socketcan',channel='can0',bitrate=1000000)
-
+data_des = np.genfromtxt('opt_traj/point_to_point.csv',delimiter=',').transpose()
 motor = Actuator(0x141,bus)
 pendulum = Pendulum(0.126,0.15)
-N = 250
+N = 164
+
 proc_time = np.zeros(N)
 X_ar = np.zeros((4,N))
 
@@ -20,11 +19,12 @@ for i in range(N):
     while time.time() - prev_time < 0.0025:
         pass
     prev_time = time.time()
-    X_des = np.array([[q_des],
-                      [0],
+    X_des = np.array([[data_des[1,i]],
+                      [data_des[2,i]],
                       [0]])
+
     X = state.X
-    u = pendulum.control_pd(X_des,X)
+    u =  data_des[3,i] + pendulum.cont_pd(X_des,X)
     proc_time[i] = state.time
     X_ar[0,i] = state.time
     X_ar[1:3,i] = state.X.reshape((1,2))
@@ -34,10 +34,11 @@ for i in range(N):
 
 motor.send_current(0)
 
-np.savetxt("data_static.csv",np.transpose(X_ar),delimiter = ',')
+#np.savetxt("data_static.csv",np.transpose(X_ar),delimiter = ',')
 
-plt.plot(proc_time[1:],X_ar[1,1:],label="pos")
-plt.plot(proc_time[1:],X_ar[2,1:],label="vel")
-plt.plot(proc_time[1:],q_des + 0*proc_time[1:],'--',label="x_des")
+plt.plot(proc_time,X_ar[1,],label="pos")
+plt.plot(proc_time,X_ar[2,],label="vel")
+plt.plot(proc_time,data_des[1,:],'--',label="x_des")
+plt.plot(proc_time,data_des[2,:],'--',label="vel_des")
 plt.legend()
-plt.savefig("point_unopt.png")
+plt.savefig("point_opt.png")
