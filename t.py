@@ -1,8 +1,13 @@
-from pendulum import *
+import threading
+import time
 
-time = np.linspace(0,10,1000)
-X_des = ident_traj(time)
-plt.plot(time[1:],X_des[0,1:],'--',label="x_des")
-plt.plot(time[1:],X_des[1,1:],'--',label="dx_des")
-plt.legend()
-plt.show()
+def f():
+    print("hello world")  # your code here
+    #myThread.run()
+
+if __name__ == '__main__':
+    myThread = threading.Timer(0.004, f)  # timer is set to 3 seconds
+    myThread.start()
+    time.sleep(5)  # it can be loop or other time consuming code here
+    if myThread.is_alive():
+        myThread.cancel()
