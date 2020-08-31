@@ -5,7 +5,7 @@ bus = can.interface.Bus(bustype='socketcan',channel='can0',bitrate=1000000)
 
 motor = Actuator(0x141,bus)
 pendulum = Pendulum(0.126,0.15)
-N = 4000
+N = 8000
 
 proc_time = np.zeros(N)
 X_ar = np.zeros((4,N))
